@@ -6,11 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import eu.braincluster.weatherapp.data.WeatherResult
 import eu.braincluster.weatherapp.databinding.ActivityMainBinding
 import eu.braincluster.weatherapp.network.WeatherApi
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity()
 {
@@ -34,9 +36,18 @@ class MainActivity : AppCompatActivity()
 
     private fun initializeRetrofit()
     {
+        val timeoutMsec = 1000L;
+
+        val httpClient = OkHttpClient.Builder()
+            .connectTimeout(timeoutMsec, TimeUnit.MILLISECONDS)
+            .readTimeout(timeoutMsec, TimeUnit.MILLISECONDS)
+            .writeTimeout(timeoutMsec, TimeUnit.MILLISECONDS)
+            .build()
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(httpClient)
             .build()
 
         weatherApi = retrofit.create(WeatherApi::class.java)
@@ -53,12 +64,30 @@ class MainActivity : AppCompatActivity()
             {
                 override fun onResponse(call: Call<WeatherResult>, response: Response<WeatherResult>)
                 {
-                    Log.i("WEATHERDATA", response.body()?.weather.toString())
+                    val weatherResult = response.body()
+
+                    val description = weatherResult?.weather?.get(0)?.description
+                    val currentTemp = weatherResult?.main?.temp
+                    val minTemp = weatherResult?.main?.temp_min
+                    val maxTemp = weatherResult?.main?.temp_max
+
+                    if (description != null) {
+                        binding.textViewResult.text = """
+                        Description: $description
+                        Current temp: $currentTemp
+                        Min temp: $minTemp
+                        Max temp: $maxTemp
+                        """.trimIndent()
+                    }
+                    else
+                    {
+                        binding.textViewResult.text = "Data not found error!"
+                    }
                 }
 
                 override fun onFailure(call: Call<WeatherResult>, ex: Throwable)
                 {
-                    Log.e("WEATHERDATA", ex.message.toString())
+                    binding.textViewResult.text = ex.message.toString()
                 }
             })
     }
