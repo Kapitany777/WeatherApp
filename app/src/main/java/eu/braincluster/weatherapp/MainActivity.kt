@@ -71,7 +71,8 @@ class MainActivity : AppCompatActivity()
                     val minTemp = weatherResult?.main?.temp_min
                     val maxTemp = weatherResult?.main?.temp_max
 
-                    if (description != null) {
+                    if (description != null)
+                    {
                         binding.textViewResult.text = """
                         Description: $description
                         Current temp: $currentTemp
@@ -92,4 +93,3 @@ class MainActivity : AppCompatActivity()
             })
     }
 }
-

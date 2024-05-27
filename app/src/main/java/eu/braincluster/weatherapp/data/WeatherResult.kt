@@ -26,5 +26,3 @@ data class Sys(val type: Number?, val id: Number?, val country: String?, val sun
 data class Weather(val id: Number?, val main: String?, val description: String?, val icon: String?)
 
 data class Wind(val speed: Number?, val deg: Number?)
-
-

@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 // HOST: http://api.openweathermap.org
 // PATH: /data/2.5/weather
-// Query / URL params: ?q=Szentes&units=metric&appid=c3e97034b71a111ecef34734046ff5dd
+// Query / URL params: ?q=Szentes&units=metric&appid=appid
 
 interface WeatherApi
 {
